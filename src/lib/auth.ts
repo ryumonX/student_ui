@@ -1,3 +1,5 @@
+import Cookies from 'js-cookie';
+
 export async function login(email: string, password: string): Promise<{
   success: boolean;
   message?: string;
@@ -14,14 +16,14 @@ export async function login(email: string, password: string): Promise<{
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
       method: 'POST',
-      credentials: 'include', // penting untuk cookie (kalau backend set cookie juga)
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ email, password }),
     });
 
-    const result = await res.json(); // ini berisi { message, token, user }
+    const result = await res.json();
 
     if (!res.ok) {
       return {
@@ -30,12 +32,22 @@ export async function login(email: string, password: string): Promise<{
       };
     }
 
+    const { token, user } = result;
+
+    // ✅ Simpan ke localStorage
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(user));
+
+    // ✅ Simpan ke cookie (bisa diakses client-side)
+    Cookies.set('token', token, { expires: 7 }); // 7 hari
+    Cookies.set('user', JSON.stringify(user), { expires: 7 });
+
     return {
       success: true,
       message: result.message,
       data: {
-        token: result.token,
-        user: result.user,
+        token,
+        user,
       },
     };
   } catch {
