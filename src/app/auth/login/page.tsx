@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 import { login } from '@/lib/auth';
 import { Envelope, LockKey, Eye, EyeSlash, SpinnerGap, Buildings, User, ShieldCheck } from 'phosphor-react';
 
@@ -18,12 +19,12 @@ export default function LoginPage() {
   useEffect(() => {
     // Trigger animation after component mounts
     setShowAnimation(true);
-    
+
     // Check if mobile
     const checkIsMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkIsMobile();
     window.addEventListener('resize', checkIsMobile);
     return () => window.removeEventListener('resize', checkIsMobile);
@@ -38,13 +39,16 @@ export default function LoginPage() {
     const res = await login(email, password);
 
     if (res.success) {
-      // Simpan ke localStorage
+      // ✅ Simpan ke localStorage dan cookie
       if (res.data?.token) {
         localStorage.setItem('token', res.data.token);
+        Cookies.set('token', res.data.token, { expires: 7 }); // 7 hari
       }
 
       if (res.data?.user) {
-        localStorage.setItem('user', JSON.stringify(res.data.user));
+        const userString = JSON.stringify(res.data.user);
+        localStorage.setItem('user', userString);
+        Cookies.set('user', userString, { expires: 7 }); // 7 hari
       }
 
       router.push('/students');
@@ -59,6 +63,7 @@ export default function LoginPage() {
 };
 
 
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f172a] to-[#1e3a8a] p-4 relative overflow-hidden">
       {/* Animated Background Elements - Simplified for mobile */}
@@ -69,7 +74,7 @@ export default function LoginPage() {
           <div className="absolute top-1/3 right-1/3 w-72 h-72 rounded-full bg-cyan-500 opacity-15 blur-3xl animate-pulse animation-delay-4000"></div>
         </div>
       )}
-      
+
       {/* Login Card */}
       <div className={`relative z-10 bg-gradient-to-br from-[#0f172a] to-[#1e293b] rounded-3xl shadow-2xl overflow-hidden w-full max-w-4xl transition-all duration-1000 ease-out ${showAnimation ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
         <div className="flex flex-col md:flex-row">
@@ -87,7 +92,7 @@ export default function LoginPage() {
                 <h2 className="text-base sm:text-lg md:text-xl font-medium text-blue-300">INTERNATIONAL</h2>
               </div>
             </div>
-            
+
             <div className="mt-4 md:mt-8 w-full max-w-xs">
               <div className="flex items-center mb-4 md:mb-6">
                 <div className="flex-shrink-0">
@@ -100,7 +105,7 @@ export default function LoginPage() {
                   <p className="text-blue-200 text-xs sm:text-sm">Enterprise-grade security</p>
                 </div>
               </div>
-              
+
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className="bg-blue-900/50 rounded-full p-2 sm:p-3">
@@ -113,14 +118,14 @@ export default function LoginPage() {
                 </div>
               </div>
             </div>
-            
+
             <div className="mt-auto pt-6">
               <p className="text-blue-300 text-xs sm:text-sm">
                 © 2023 Delta Abadi International. All rights reserved.
               </p>
             </div>
           </div>
-          
+
           {/* Mobile Brand Header */}
           <div className="md:hidden bg-gradient-to-r from-[#1e3a8a] to-[#0f172a] p-4 flex items-center justify-center">
             <div className="flex items-center">
@@ -136,7 +141,7 @@ export default function LoginPage() {
               </div>
             </div>
           </div>
-          
+
           {/* Form Side */}
           <div className="bg-white p-6 sm:p-8 md:p-10 lg:p-12 w-full md:w-1/2">
             <div className="text-center mb-6 md:mb-8 lg:mb-10">
@@ -145,7 +150,7 @@ export default function LoginPage() {
                 Sign in to your Delta Abadi account
               </p>
             </div>
-            
+
             <form onSubmit={handleSubmit}>
               {error && (
                 <div className="mb-4 sm:mb-6 p-3 bg-red-50 text-red-700 rounded-lg flex items-center gap-2 border border-red-200 text-sm">
@@ -155,7 +160,7 @@ export default function LoginPage() {
                   <span>{error}</span>
                 </div>
               )}
-              
+
               <div className="mb-4 sm:mb-6">
                 <label htmlFor="email" className="block text-gray-700 mb-2 font-medium text-sm sm:text-base">Work Email</label>
                 <div className="relative">
@@ -173,7 +178,7 @@ export default function LoginPage() {
                   />
                 </div>
               </div>
-              
+
               <div className="mb-6 sm:mb-8">
                 <label htmlFor="password" className="block text-gray-700 mb-2 font-medium text-sm sm:text-base">Password</label>
                 <div className="relative">
@@ -202,7 +207,7 @@ export default function LoginPage() {
                   </button>
                 </div>
               </div>
-              
+
               <div className="flex flex-col sm:flex-row items-start justify-between mb-6 sm:mb-8 gap-3">
                 <div className="flex items-center">
                   <input
@@ -221,7 +226,7 @@ export default function LoginPage() {
                   </a>
                 </div>
               </div>
-              
+
               <button
                 type="submit"
                 disabled={isLoading}
@@ -237,13 +242,13 @@ export default function LoginPage() {
                 )}
               </button>
             </form>
-            
+
             <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-100">
               <p className="text-gray-600 text-center text-xs sm:text-sm">
                 Need help? <a href="#" className="text-blue-600 font-medium hover:text-blue-800">Contact IT Support</a>
               </p>
             </div>
-            
+
             {/* Mobile Footer */}
             <div className="mt-6 md:hidden pt-4 border-t border-gray-100">
               <div className="grid grid-cols-2 gap-4">
@@ -267,7 +272,7 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-      
+
       <style jsx global>{`
         @keyframes pulse {
           0%, 100% { opacity: 0.15; }
