@@ -3,7 +3,7 @@ import axios from 'axios';
 // Buat instance axios
 const API = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api', // Sesuaikan baseURL-nya
-  timeout: 25000, // ⏳ tambahkan timeout jadi 20 detik (20000 ms)
+  timeout: 30000, // ⏳ tambahkan timeout jadi 20 detik (20000 ms)
   withCredentials: true, // untuk mengirim cookie saat menggunakan auth berbasis cookie
 });
 

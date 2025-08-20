@@ -44,13 +44,13 @@ const ApplicationDetailsCard: React.FC<{ applicant: Applicant | null }> = ({ app
   const [expandedCard, setExpandedCard] = useState<string | null>("details");
   const [activeSection, setActiveSection] = useState<string>("passport");
 
-  if (!applicant) {
-    return (
-      <div className="p-6 bg-white border rounded-xl shadow-sm text-gray-500 text-center animate-pulse">
-        Sedang memuat data aplikasi...
-      </div>
-    );
-  }
+  // if (!applicant) {
+  //   return (
+  //     <div className="p-6 bg-white border rounded-xl shadow-sm text-gray-500 text-center animate-pulse">
+  //       Sedang memuat data aplikasi...
+  //     </div>
+  //   );
+  // }
 
   const toggleCard = (id: string) => {
     setExpandedCard((prev) => (prev === id ? null : id));
